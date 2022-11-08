@@ -170,8 +170,15 @@ namespace nvrhi::vulkan
 
             if ((before.stageFlags != beforeStageFlags || after.stageFlags != afterStageFlags) && !imageBarriers.empty())
             {
-                m_CurrentCmdBuf->cmdBuf.pipelineBarrier(beforeStageFlags, afterStageFlags,
-                    vk::DependencyFlags(), {}, {}, imageBarriers);
+				if ( 1 )//beforeStageFlags != vk::PipelineStageFlags(0))
+				{
+					m_CurrentCmdBuf->cmdBuf.pipelineBarrier(beforeStageFlags, afterStageFlags,
+                        vk::DependencyFlags(), {}, {}, imageBarriers);
+				}
+				else
+				{
+					printf("beforeStageFlags line 175 = 0\n");
+				}
 
                 imageBarriers.clear();
             }
@@ -210,8 +217,15 @@ namespace nvrhi::vulkan
 
         if (!imageBarriers.empty())
         {
-            m_CurrentCmdBuf->cmdBuf.pipelineBarrier(beforeStageFlags, afterStageFlags,
-                vk::DependencyFlags(), {}, {}, imageBarriers);
+			if ( 1 )//beforeStageFlags != vk::PipelineStageFlags(0))
+			{
+				m_CurrentCmdBuf->cmdBuf.pipelineBarrier(beforeStageFlags, afterStageFlags,
+                    vk::DependencyFlags(), {}, {}, imageBarriers);
+			}
+			else
+			{
+				printf("beforeStageFlags line 222 = 0\n");
+			}
         }
 
         beforeStageFlags = vk::PipelineStageFlags(0);

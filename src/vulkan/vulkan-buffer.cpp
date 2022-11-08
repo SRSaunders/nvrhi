@@ -206,6 +206,10 @@ namespace nvrhi::vulkan
 
     void CommandList::writeVolatileBuffer(Buffer* buffer, const void* data, size_t dataSize)
     {
+		static uint32_t maxSlotUsage = 0;
+		uint32_t freeSlots = 0;
+		bool measureUsage = false;	// SRS - turn this on to measure versions high water mark
+		
         VolatileBufferState& state = m_VolatileBufferStates[buffer];
 
         if (!state.initialized)
@@ -267,14 +271,20 @@ namespace nvrhi::vulkan
                         // If the version points at an invalid queue, assume it's available. Signal the error too.
                         utils::InvalidEnum();
                         found = true;
-                        break;
+						if (measureUsage)
+							freeSlots++;
+                        else
+							break;
                     }
 
-                    if (id <= queueCompletionValues[queueIndex])
+                    else if (id <= queueCompletionValues[queueIndex])
                     {
                         // If the version was used in a completed CL, it's available.
                         found = true;
-                        break;
+						if (measureUsage)
+							freeSlots++;
+						else
+							break;
                     }
                 }
             }
@@ -294,6 +304,13 @@ namespace nvrhi::vulkan
                 return;
             }
 
+			if (measureUsage && freeSlots > 0)
+			{
+				maxSlotUsage = std::max(maxSlotUsage, maxVersions - freeSlots);
+				measureUsage = false;
+				continue;
+			}
+			
             // Encode the current CL ID for this version of the buffer, in a "pending" state
             uint64_t newVersionInfo = (uint64_t(m_CommandListParameters.queueType) << c_VersionQueueShift) | (m_CurrentCmdBuf->recordingID);
 
