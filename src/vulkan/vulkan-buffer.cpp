@@ -177,6 +177,18 @@ namespace nvrhi::vulkan
         buffer->desc = desc;
         buffer->managed = false;
 
+        m_Context.nameVKObject(VkBuffer(buffer->buffer), vk::DebugReportObjectTypeEXT::eBuffer, desc.debugName.c_str());
+
+        if (!desc.isVirtual)
+        {
+	        if (m_Context.extensions.buffer_device_address)
+	        {
+		        auto addressInfo = vk::BufferDeviceAddressInfo().setBuffer(buffer->buffer);
+
+		        buffer->deviceAddress = m_Context.device.getBufferAddress(addressInfo);
+	        }
+        }
+
         return BufferHandle::Create(buffer);
     }
 

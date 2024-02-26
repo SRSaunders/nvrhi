@@ -771,6 +771,8 @@ namespace nvrhi::vulkan
         texture->image = image;
         texture->managed = false;
 
+        m_Context.nameVKObject(texture->image, vk::DebugReportObjectTypeEXT::eImage, desc.debugName.c_str());
+
         return TextureHandle::Create(texture);
     }
 
