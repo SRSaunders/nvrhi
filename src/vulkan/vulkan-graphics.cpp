@@ -437,7 +437,7 @@ namespace nvrhi::vulkan
             pso->shaderMask = pso->shaderMask | ShaderType::Geometry;
         }
 
-        if (desc.PS)
+        if (desc.PS && fb->desc.colorAttachments.size() > 0)
         {
             shaderStages.push_back(makeShaderStageCreateInfo(PS, 
                 specInfos, specMapEntries, specData));

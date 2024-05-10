@@ -66,7 +66,7 @@ namespace nvrhi::d3d12
         if (shader) desc.GS = { &shader->bytecode[0], shader->bytecode.size() };
 
         shader = checked_cast<Shader*>(state.PS.Get());
-        if (shader) desc.PS = { &shader->bytecode[0], shader->bytecode.size() };
+        if (shader && fbinfo.colorFormats.size() > 0) desc.PS = { &shader->bytecode[0], shader->bytecode.size() };
 
 
         TranslateBlendState(state.renderState.blendState, desc.BlendState);
